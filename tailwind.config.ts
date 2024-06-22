@@ -1,6 +1,5 @@
-import type { Config } from "tailwindcss";
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+export default {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -13,8 +12,15 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        "primary-green": "#2F9519",
+        "primary-green-light": "#B7D3B9",
+        "primary-green-dark": "#105900",
+      },
+      fontFamily: {
+        'readexPro': ['Readex Pro', 'sans-serif'],
+      },
     },
   },
   plugins: [],
 };
-export default config;
