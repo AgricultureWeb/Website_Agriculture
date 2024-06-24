@@ -1,7 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, FormikHelpers } from "formik";
+import Link from "next/link";
 import * as Yup from "yup";
 import {
   ClosedEye,
@@ -10,16 +11,19 @@ import {
   globe,
 } from "../../../public/assets/icons/icons";
 
+interface LoginValues {
+  picked: string;
+  passwd: string;
+  userName: string;
+  agreeToTerms: boolean;
+}
+
 function Login() {
-  const [isFocused, setIsFocused] = useState(false);
-  const [view, setView] = useState("password");
+  const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [view, setView] = useState<"password" | "text">("password");
 
   const toggleView = () => {
-    if (view === "password") {
-      setView("text");
-    } else {
-      setView("password");
-    }
+    setView((prevView) => (prevView === "password" ? "text" : "password"));
   };
 
   const LoginValidationSchema = Yup.object().shape({
@@ -36,15 +40,15 @@ function Login() {
 
   return (
     <div className="grid grid-cols-12 h-[100vh]">
-      <div className="col-span-5">
+      <div className="col-span-5 overflow-auto">
         <Image
           src="/assets/images/logo.png"
           alt="Logo"
           width={250}
           height={100}
-          className="mx-auto mt-10"
+          className="mx-auto mt-5"
         />
-        <h1 className="text-[#0C340D] mt-7 text-center font-readexPro text-5xl font-bold leading-normal">
+        <h1 className="text-[#0C340D] mt-5 text-center text-4xl font-bold">
           Login
         </h1>
 
@@ -56,13 +60,17 @@ function Login() {
             agreeToTerms: false,
           }}
           validationSchema={LoginValidationSchema}
-          onSubmit={(values) => {
+          onSubmit={(
+            values: LoginValues,
+            { setSubmitting }: FormikHelpers<LoginValues>
+          ) => {
             console.log("login values => ", values);
+            setSubmitting(false);
           }}
         >
           {({ errors, touched }) => (
-            <Form className="mt-10 mx-32">
-              <div className="flex flex-col space-y-7">
+            <Form className="mt-10 mx-24">
+              <div className="flex flex-col space-y-5">
                 <div className="flex flex-col">
                   <div
                     className="flex justify-between mx-3"
@@ -105,9 +113,7 @@ function Login() {
                     />
                     <span
                       className="col-span-1 cursor-pointer m-auto"
-                      onClick={() => {
-                        toggleView();
-                      }}
+                      onClick={toggleView}
                     >
                       {view === "password" ? OpenEye : ClosedEye}
                     </span>
@@ -122,10 +128,9 @@ function Login() {
                     name="agreeToTerms"
                     id="agreeToTerms"
                   />
-                  <label className=" text-sm ml-2 " htmlFor="agreeToTerms">
+                  <label className="text-sm ml-2" htmlFor="agreeToTerms">
                     Accept all Terms and Conditions
                   </label>
-                  {console.log(touched)}
                 </div>
                 <button
                   type="submit"
@@ -137,6 +142,17 @@ function Login() {
             </Form>
           )}
         </Formik>
+        <div className=" flex justify-center content-center text-primary-green items-center my-7">
+          <hr className="border-1 my-auto border-primary-green w-32 mr-5" />
+          or
+          <hr className="ml-5 border-1 my-auto border-primary-green w-32" />
+        </div>
+        <Link
+          href="/signup"
+          className="w-fit flex mx-auto text-lg font-bold mb-16 text-primary-green-dark hover:underline"
+        >
+          Signup
+        </Link>
       </div>
       <div
         className="col-span-7 h-full relative bg-black"
@@ -148,7 +164,8 @@ function Login() {
       >
         <div className="absolute inset-0 bg-black opacity-50"></div>
         <button className="flex absolute z-10 top-5 text-sm left-5 bg-primary-green-light rounded-md px-4 py-1">
-          {globe} <span className="ml-5 mr-24 my-auto">English</span> <span className="my-auto">{down_polygon}</span>
+          {globe} <span className="ml-5 mr-24 my-auto">English</span>{" "}
+          <span className="my-auto">{down_polygon}</span>
         </button>
       </div>
     </div>

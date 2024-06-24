@@ -2,6 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-.input-field{
-    @apply bg-primary-green-light rounded-lg h-11 px-4;
+.input-field {
+  @apply bg-primary-green-light rounded-lg h-11 px-4;
+}
+
+.nav-button {
+  @apply cursor-pointer px-5 py-0.5 rounded-md;
+}
+
+input[type="file"]::file-selector-button {
+    background-color: #A2BCA4;
+    padding: 8px 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: small;
+}
+
+.col-span-5::-webkit-scrollbar {
+  width: 5px;
+}
+
+.col-span-5::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+
+.col-span-5::-webkit-scrollbar-thumb {
+  background: #888; 
 }

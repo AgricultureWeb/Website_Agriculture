@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "formik": "^2.4.6",
+    "formik-file-and-image-input": "^0.0.6",
     "next": "14.2.4",
     "react": "^18",
     "react-dom": "^18",
