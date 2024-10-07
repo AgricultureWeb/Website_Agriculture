@@ -13,6 +13,15 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      fontFamily: {
+        sans: ['"Readex Pro"', "sans-serif"],
+      },
+      colors: {
+        primary_black: "#0C340D",
+        primary_green: "#2F9519",
+        primary_white: "#EBE8E8",
+        secondary_green: "#A2BCA4",
+      },
     },
   },
   plugins: [],

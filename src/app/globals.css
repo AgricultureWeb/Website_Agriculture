@@ -2,32 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+/* Styles for a thin scrollbar */
+::-webkit-scrollbar {
+  width: 5px; /* Adjust the width for thinness */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Optional: Track color */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888; /* Optional: Thumb color */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Optional: Thumb color on hover */
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  @apply font-sans;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.primary-green-bg-button {
+  @apply bg-primary_green text-white text-center px-16 py-2 w-fit rounded-full text-xl mx-auto mt-9 font-light;
+}
+
+.input-field {
+  @apply bg-secondary_green py-1 px-2 w-full rounded-lg text-lg;
+}
+
+.custom-placeholder::placeholder {
+  @apply text-[#637865] text-[15px];
+}
+
+.uploadField {
+  @apply bg-[#EDEDED] text-[#49624B] text-center w-32 px-1.5 py-1 rounded-lg text-sm;
 }
