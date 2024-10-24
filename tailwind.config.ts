@@ -22,6 +22,9 @@ const config: Config = {
         primary_white: "#EBE8E8",
         secondary_green: "#A2BCA4",
       },
+      fontSize: {
+        "1.5xl": "22px",
+      }
     },
   },
   plugins: [],

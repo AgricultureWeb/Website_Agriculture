@@ -10,7 +10,7 @@ import Link from "next/link";
 const page = () => {
   return (
     <section className="h-screen flex overflow-hidden">
-      <div className="w-[40%] px-20 content-center h-screen overflow-y-auto ">
+      <div className="w-full lg:w-[40%] px-20 content-center h-screen overflow-y-auto ">
         <Image src={logo} alt="Krushi Saathi Logo" className=" mx-auto" />
         <SignupForm />
         <div className="flex justify-center content-center mt-6">
@@ -25,7 +25,7 @@ const page = () => {
         </Link>
       </div>
       <div
-        className="w-[60%] bg-cover bg-no-repeat bg-center relative"
+        className="w-0 lg:w-[60%] bg-cover bg-no-repeat bg-center relative"
         style={{
           backgroundImage: `url('/assets/images/mission.png')`,
         }}

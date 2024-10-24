@@ -71,7 +71,7 @@ const LoginForm = () => {
                 className="text-sm text-red-400"
               />
             </div>
-            <div>
+            <div className="relative">
               <Field
                 className="input-field custom-placeholder"
                 id="password"
