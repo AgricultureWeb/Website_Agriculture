@@ -18,6 +18,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <link
+          href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/3/atlas.min.css"
+          rel="stylesheet"
+        />
         <script
           src="https://upload-widget.cloudinary.com/global/all.js"
           type="text/javascript"

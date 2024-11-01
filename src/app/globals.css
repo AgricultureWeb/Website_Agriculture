@@ -50,3 +50,5 @@ body {
 .side-button-mobile {
   @apply w-[380px] text-1.5xl flex justify-between;
 }
+
+

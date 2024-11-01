@@ -12,6 +12,8 @@
     "@cloudinary/react": "^1.13.0",
     "@cloudinary/url-gen": "^1.21.0",
     "awesome-react-stepper": "^1.1.1",
+    "azure-maps-control": "^3.4.0",
+    "azure-maps-drawing-tools": "^1.0.4",
     "formik": "^2.4.6",
     "next": "14.2.4",
     "react": "^18",

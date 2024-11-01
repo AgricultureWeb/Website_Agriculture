@@ -9,6 +9,9 @@ import NewsComponent from "../components/NewsComponent";
 import SupportComponent from "../components/SupportComponent";
 import PrivacyComponent from "../components/PrivacyComponent";
 import HelpComponent from "../components/HelpComponent";
+import { name } from "@cloudinary/url-gen/actions/namedTransformation";
+import { position } from "@cloudinary/url-gen/qualifiers/timeline";
+
 
 const page = () => {
   const [active, setActive] = useState("home");
@@ -48,6 +51,8 @@ const page = () => {
 
     handleActiveChange(active);
   }, [active]);
+
+
 
   return (
     <main className="lg:flex">

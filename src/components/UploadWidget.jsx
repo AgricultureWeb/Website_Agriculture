@@ -1,3 +1,4 @@
+"use client";
 import { useEffect, useRef, useState } from "react";
 
 const UploadWidget = ({ text, onUploadSuccess }) => {
@@ -9,36 +10,37 @@ const UploadWidget = ({ text, onUploadSuccess }) => {
 
   useEffect(() => {
     const initWidget = () => {
-      widgetRef.current = window.cloudinary.createUploadWidget(
-        {
-          cloudName: cloudName,
-          uploadPreset: uploadPreset,
-        },
-        (error, result) => {
-          if (!error && result && result.event === "success") {
-            if (onUploadSuccess) {
-              onUploadSuccess(result.info);
+      if (typeof window !== "undefined" && window.cloudinary) {
+        widgetRef.current = window.cloudinary.createUploadWidget(
+          {
+            cloudName: cloudName,
+            uploadPreset: uploadPreset,
+          },
+          (error, result) => {
+            if (!error && result && result.event === "success") {
+              if (onUploadSuccess) {
+                onUploadSuccess(result.info);
+              }
             }
           }
-        }
-      );
-
-      setWidgetLoaded(true);
+        );
+        setWidgetLoaded(true);
+      }
     };
 
-    if (!widgetLoaded) {
-      initWidget();
+    initWidget();
+  }, [cloudName, uploadPreset, onUploadSuccess]);
+
+  const openWidget = () => {
+    if (widgetRef.current) {
+      widgetRef.current.open();
     }
-  }, [widgetLoaded, onUploadSuccess, cloudName, uploadPreset]);
+  };
 
   return (
-    <button
-      onClick={() => widgetRef.current.open()}
-      type="button"
-      className="bg-secondary_green text-black block mx-auto mt-1 rounded-lg w-full text-sm "
-    >
-      {text}
-    </button>
+    <div>
+      <button onClick={openWidget}>{text}</button>
+    </div>
   );
 };
 
