@@ -237,9 +237,9 @@ const Sidebar = () => {
       </div>
 
       {/* // Mobile Sidebar */}
-      <nav className="flex lg:hidden border-b-2 border-b-primary_green sticky top-0">
+      <nav className="flex lg:hidden border-b-2 border-b-primary_green">
         <button
-          className="absolute z-50 m-4 space-y-2"
+          className="absolute z-30 m-4 space-y-2"
           onClick={() => setShowSidebar(!showSidebar)}
         >
           {!showSidebar ? (
@@ -250,7 +250,7 @@ const Sidebar = () => {
             </>
           ) : (
             <>
-              <span className="text-2xl ml-2 mb-1">X</span>
+              <span className="text-2xl ml-2 mb-1 ">X</span>
             </>
           )}
         </button>
@@ -263,7 +263,7 @@ const Sidebar = () => {
         </div>
 
         <div
-          className={`absolute transform duration-100 top-0 bg-white h-fit ${
+          className={`absolute z-20 transform duration-100 top-0 bg-white h-fit ${
             showSidebar ? "left-0" : "-left-[410px]"
           }`}
         >
