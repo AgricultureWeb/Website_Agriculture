@@ -33,76 +33,78 @@ const Page = () => {
 
   return (
     <>
-      <div className="flex h-screen">
-        <div className="">
+      <div className="block relative lg:flex h-screen overflow-hidden">
+        <div className="w-full lg:w-fit">
           <Sidebar />
         </div>
-        <div>
-          <div className="flex w-96 text-2xl px-3 py-2 border-b-2 border-b-gray-400">
+        <div className="absolute lg:relative z-10 bg-white w-full lg:w-96 bottom-0 h-[400px] lg:h-auto rounded-t-xl lg:rounded-none">
+          <div className="flex w-full lg:w-96 text-2xl px-3 py-2 border-b-2 border-b-gray-400">
             <button onClick={() => router.back()}>
               {" "}
-              <Image src={backArrow} width={13} height={13} alt="back"/>
+              <Image src={backArrow} width={13} height={13} alt="back" />
             </button>
             <span className="w-full text-center">Choose Location</span>
           </div>
-          {locations.length > 0 &&
-            locations.map((location) => (
-              <>
-                <div key={location.id} className="w-fit mx-auto mt-5">
-                  <Image
-                    src={placeholder_lab}
-                    height={300}
-                    width={300}
-                    alt={"lab"}
-                  />
-                  <h2 className="mt-3 text-sm">
-                    {location.poi.name},{" "}
-                    {location.address.countrySubdivisionName}
-                  </h2>
-                  <p className="text-xs mt-2">
-                    Address: {location.address.freeformAddress}
-                  </p>
-                  <p className="text-xs mt-2">Phone: xxxxxxxxxx</p>
+          <div className="overflow-auto h-96 lg:h-auto pb-10 lg:pb-0">
+            {locations.length > 0 &&
+              locations.map((location) => (
+                <>
+                  <div key={location.id} className="w-fit mx-auto mt-5">
+                    <Image
+                      src={placeholder_lab}
+                      height={300}
+                      width={300}
+                      alt={"lab"}
+                    />
+                    <h2 className="mt-3 text-sm">
+                      {location.poi.name},{" "}
+                      {location.address.countrySubdivisionName}
+                    </h2>
+                    <p className="text-xs mt-2">
+                      Address: {location.address.freeformAddress}
+                    </p>
+                    <p className="text-xs mt-2">Phone: xxxxxxxxxx</p>
 
-                  <div className="flex justify-around mt-5">
-                    <button className="location_utility_button">
-                      <Image
-                        src={Call}
-                        width={20}
-                        height={20}
-                        alt="call"
-                        className="mr-1"
-                      />
-                      Call
-                    </button>
-                    <button className="location_utility_button">
-                      <Image
-                        src={Directions}
-                        width={20}
-                        height={20}
-                        alt="Directions"
-                        className="mr-1"
-                      />
-                      Directions
-                    </button>
-                    <button className="location_utility_button">
-                      <Image
-                        src={Bookmark}
-                        width={20}
-                        height={20}
-                        alt="Save"
-                        className="mr-1"
-                      />
-                      Save
+                    <div className="flex justify-around mt-5">
+                      <button className="location_utility_button">
+                        <Image
+                          src={Call}
+                          width={20}
+                          height={20}
+                          alt="call"
+                          className="mr-1"
+                        />
+                        Call
+                      </button>
+                      <button className="location_utility_button">
+                        <Image
+                          src={Directions}
+                          width={20}
+                          height={20}
+                          alt="Directions"
+                          className="mr-1"
+                        />
+                        Directions
+                      </button>
+                      <button className="location_utility_button">
+                        <Image
+                          src={Bookmark}
+                          width={20}
+                          height={20}
+                          alt="Save"
+                          className="mr-1"
+                        />
+                        Save
+                      </button>
+                    </div>
+                    <button className="bg-primary_green text-white text-sm font-light rounded-full px-4 py-0.5 flex mx-auto my-5">
+                      Proceed
                     </button>
                   </div>
-                  <button className="bg-primary_green text-white text-sm font-light rounded-full px-4 py-0.5 flex mx-auto my-5">
-                    Proceed
-                  </button>
-                </div>
-                <hr />
-              </>
-            ))}
+                  <hr />
+                </>
+              ))}
+          </div>
         </div>
         <div className="w-full h-full">
           <AzureMap
