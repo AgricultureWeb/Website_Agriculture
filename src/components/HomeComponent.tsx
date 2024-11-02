@@ -1,8 +1,10 @@
 import React from "react";
 import globe from "../../public/assets/icons/globe.svg";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 const HomeComponent = () => {
+  const router = useRouter();
   return (
     <section className="p-3 overflow-y-auto h-screen">
       <div className="flex justify-between">
@@ -27,14 +29,15 @@ const HomeComponent = () => {
           >
             How to Take Soil Sample
           </div>
-          <div
-            className="bg-cover bg-center bg-no-repeat rounded-lg text-center content-center text-3xl h-[250px]"
+          <button
+            className="bg-cover w-full bg-center bg-no-repeat rounded-lg text-center content-center text-3xl h-[250px]"
             style={{  
               backgroundImage: `url('/assets/images/register-sample-bg.png')`,
             }}
+            onClick={() => router.push("/map")}
           >
             Register Your Sample
-          </div>
+          </button>
         </div>
       </div>
       <div className="flex flex-wrap mt-0 md:mt-7">

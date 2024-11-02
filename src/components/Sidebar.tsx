@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useState } from "react";
+import React, { use, useContext, useState } from "react";
 import account_active from "../../public/assets/icons/Account_active.svg";
 import help_active from "../../public/assets/icons/Help_active.svg";
 import home_active from "../../public/assets/icons/Home_active.svg";
@@ -21,18 +21,17 @@ import logo from "../../public/assets/images/logo.png";
 import right_arrow from "../../public/assets/icons/right_arrow.svg";
 import logo_small from "../../public/assets/images/logo_small.png";
 import Image from "next/image";
+import navigationContext from "@/context/navigationContext";
 
-interface SidebarProps {
-  active: string;
-  setActive: (active: string) => void;
-  setPrevActive?: (active: string) => void;
-}
+const Sidebar = () => {
+  const navContext = useContext(navigationContext);
 
-const Sidebar: React.FC<SidebarProps> = ({
-  active,
-  setActive,
-  setPrevActive,
-}) => {
+  if (!navContext) {
+    console.error("Navigation context is not provided");
+    return <div>Error: Navigation context is not provided.</div>;
+  }
+  const { active, setActive, setPrevActive, sidebarOpen, setSidebarOpen } =
+    navContext;
   const [showSidebar, setShowSidebar] = useState(false);
 
   const handleChange = (component: string) => {
@@ -42,13 +41,37 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {/* // Desktop Sidebar */}
-      <div className="hidden lg:block h-screen overflow-y-auto border-r-2 border-r-primary_green">
-        <Image src={logo} alt="Krushi Saathi Logo" className=" mx-auto" />
-        <div className="w-fit mx-auto space-y-3">
+      <div
+        className={`relative ${
+          sidebarOpen ? "w-64" : "w-20"
+        } hidden lg:block h-screen overflow-y-auto border-r-2 ${
+          sidebarOpen ? "border-r-primary_green" : "border-gray-300"
+        } `}
+      >
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="absolute top-0 right-0 text-primary_green bg-gray-200 p-2 "
+        >
+          {sidebarOpen ? "<" : ">"}
+        </button>
+        <Image
+          src={sidebarOpen ? logo : logo_small}
+          alt="Krushi Saathi Logo"
+          width={sidebarOpen ? 300 : 70}
+          height={sidebarOpen ? 300 : 70}
+          className={`${sidebarOpen ? "" : "mt-10 mb-16"}`}
+        />
+        <div
+          className={`${
+            sidebarOpen ? "w-[200px]" : "w-[50px]"
+          } mx-auto space-y-3`}
+        >
           <button
             onClick={() => handleChange("home")}
             className={`flex ${
-              active === "home" ? "active-side-button" : "side-button"
+              active === "home"
+                ? `active-side-button ${sidebarOpen ? "w-56" : ""}`
+                : `side-button ${sidebarOpen ? "w-56" : ""}`
             }`}
           >
             <Image
@@ -56,16 +79,18 @@ const Sidebar: React.FC<SidebarProps> = ({
               className="mr-3 my-auto"
               color="red"
               src={active === "home" ? home_active : home}
-              width={20}
-              height={20}
+              width={sidebarOpen ? 20 : 30}
+              height={sidebarOpen ? 20 : 30}
               alt="Home"
             />
-            Home
+            {sidebarOpen ? "Home" : " "}
           </button>
           <button
             onClick={() => handleChange("account")}
             className={`flex ${
-              active === "account" ? "active-side-button" : "side-button"
+              active === "account"
+                ? `active-side-button ${sidebarOpen ? "w-56" : ""}`
+                : `side-button ${sidebarOpen ? "w-56" : ""}`
             }`}
           >
             <Image
@@ -73,16 +98,18 @@ const Sidebar: React.FC<SidebarProps> = ({
               className="mr-3 my-auto"
               color="red"
               src={active === "account" ? account_active : account}
-              width={20}
-              height={20}
+              width={sidebarOpen ? 20 : 30}
+              height={sidebarOpen ? 20 : 30}
               alt="Account"
             />
-            Account
+            {sidebarOpen ? "Account" : " "}
           </button>
           <button
             onClick={() => handleChange("settings")}
             className={`flex ${
-              active === "settings" ? "active-side-button" : "side-button"
+              active === "settings"
+                ? `active-side-button ${sidebarOpen ? "w-56" : ""}`
+                : `side-button ${sidebarOpen ? "w-56" : ""}`
             }`}
           >
             <Image
@@ -90,16 +117,18 @@ const Sidebar: React.FC<SidebarProps> = ({
               className="mr-3 my-auto"
               color="red"
               src={active === "settings" ? settings_active : settings}
-              width={20}
-              height={20}
+              width={sidebarOpen ? 20 : 30}
+              height={sidebarOpen ? 20 : 30}
               alt="Settings"
             />
-            Settings
+            {sidebarOpen ? "Settings" : " "}
           </button>
           <button
             onClick={() => handleChange("test")}
             className={`flex ${
-              active === "test" ? "active-side-button" : "side-button"
+              active === "test"
+                ? `active-side-button ${sidebarOpen ? "w-56" : ""}`
+                : `side-button ${sidebarOpen ? "w-56" : ""}`
             }`}
           >
             <Image
@@ -107,16 +136,18 @@ const Sidebar: React.FC<SidebarProps> = ({
               className="mr-3 my-auto"
               color="red"
               src={active === "test" ? test_active : test}
-              width={20}
-              height={20}
+              width={sidebarOpen ? 20 : 30}
+              height={sidebarOpen ? 20 : 30}
               alt="Test"
             />
-            Soil Analysis
+            {sidebarOpen ? "Soil Analysis" : " "}
           </button>
           <button
             onClick={() => handleChange("news")}
             className={`flex ${
-              active === "news" ? "active-side-button" : "side-button"
+              active === "news"
+                ? `active-side-button ${sidebarOpen ? "w-56" : ""}`
+                : `side-button ${sidebarOpen ? "w-56" : ""}`
             }`}
           >
             <Image
@@ -124,16 +155,18 @@ const Sidebar: React.FC<SidebarProps> = ({
               className="mr-3 my-auto"
               color="red"
               src={active === "news" ? news_active : news}
-              width={20}
-              height={20}
+              width={sidebarOpen ? 20 : 30}
+              height={sidebarOpen ? 20 : 30}
               alt="News"
             />
-            News Feed
+            {sidebarOpen ? "News Feed" : " "}
           </button>
           <button
             onClick={() => handleChange("support")}
             className={`flex ${
-              active === "support" ? "active-side-button" : "side-button"
+              active === "support"
+                ? `active-side-button ${sidebarOpen ? "w-56" : ""}`
+                : `side-button ${sidebarOpen ? "w-56" : ""}`
             }`}
           >
             <Image
@@ -141,16 +174,18 @@ const Sidebar: React.FC<SidebarProps> = ({
               className="mr-3 my-auto"
               color="red"
               src={active === "support" ? support_active : support}
-              width={20}
-              height={20}
+              width={sidebarOpen ? 20 : 30}
+              height={sidebarOpen ? 20 : 30}
               alt="Support"
             />
-            Help and Support
+            {sidebarOpen ? "Help and Support" : " "}
           </button>
           <button
             onClick={() => handleChange("privacy")}
             className={`flex ${
-              active === "privacy" ? "active-side-button" : "side-button"
+              active === "privacy"
+                ? `active-side-button ${sidebarOpen ? "w-56" : ""}`
+                : `side-button ${sidebarOpen ? "w-56" : ""}`
             }`}
           >
             <Image
@@ -158,16 +193,18 @@ const Sidebar: React.FC<SidebarProps> = ({
               className="mr-3 my-auto"
               color="red"
               src={active === "privacy" ? privacy_active : privacy}
-              width={20}
-              height={20}
+              width={sidebarOpen ? 20 : 30}
+              height={sidebarOpen ? 20 : 30}
               alt="Privacy"
             />
-            Privacy Policy
+            {sidebarOpen ? "Privacy Policy" : " "}
           </button>
           <button
             onClick={() => handleChange("help")}
             className={`flex ${
-              active === "help" ? "active-side-button" : "side-button"
+              active === "help"
+                ? `active-side-button ${sidebarOpen ? "w-56" : ""}`
+                : `side-button ${sidebarOpen ? "w-56" : ""}`
             }`}
           >
             <Image
@@ -175,11 +212,11 @@ const Sidebar: React.FC<SidebarProps> = ({
               className="mr-3 my-auto"
               color="red"
               src={active === "help" ? help_active : help}
-              width={20}
-              height={20}
+              width={sidebarOpen ? 20 : 30}
+              height={sidebarOpen ? 20 : 30}
               alt="FAQs"
             />
-            FAQs
+            {sidebarOpen ? "FAQs" : " "}
           </button>
           <button
             onClick={() => console.log("logout")}
@@ -190,11 +227,11 @@ const Sidebar: React.FC<SidebarProps> = ({
               className="mr-3 my-auto"
               color="red"
               src={logout}
-              width={20}
-              height={20}
+              width={sidebarOpen ? 20 : 30}
+              height={sidebarOpen ? 20 : 30}
               alt="logout"
             />
-            Logout
+            {sidebarOpen ? "Logout" : " "}
           </button>
         </div>
       </div>

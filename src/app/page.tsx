@@ -1,65 +1,26 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Sidebar from "../components/Sidebar";
-import HomeComponent from "../components/HomeComponent";
-import AccountComponent from "../components/AccountComponent";
-import SettingsComponent from "../components/SettingsComponent";
-import TestComponent from "../components/TestComponent";
-import NewsComponent from "../components/NewsComponent";
-import SupportComponent from "../components/SupportComponent";
-import PrivacyComponent from "../components/PrivacyComponent";
-import HelpComponent from "../components/HelpComponent";
-import { name } from "@cloudinary/url-gen/actions/namedTransformation";
-import { position } from "@cloudinary/url-gen/qualifiers/timeline";
-
+import navigationContext from "@/context/navigationContext";
 
 const page = () => {
-  const [active, setActive] = useState("home");
-  const [prevActive, setPrevActive] = useState("home");
-  const [currentComponent, setCurrentComponent] = useState(<HomeComponent />);
+  const navContext = useContext(navigationContext);
 
-  useEffect(() => {}, []);
+  if (!navContext) {
+    console.log("Navigation context is not provided", navContext);
 
-  useEffect(() => {
-    const handleActiveChange = (active: string) => {
-      switch (active) {
-        case "account":
-          setCurrentComponent(<AccountComponent />);
-          break;
-        case "settings":
-          setCurrentComponent(<SettingsComponent />);
-          break;
-        case "test":
-          setCurrentComponent(<TestComponent />);
-          break;
-        case "news":
-          setCurrentComponent(<NewsComponent setActive={setActive} prevActive={prevActive}/>);
-          break;
-        case "support":
-          setCurrentComponent(<SupportComponent />);
-          break;
-        case "privacy":
-          setCurrentComponent(<PrivacyComponent />);
-          break;
-        case "help":
-          setCurrentComponent(<HelpComponent />);
-          break;
-        default:
-          setCurrentComponent(<HomeComponent />);
-      }
-    };
+    console.error("Navigation context is not provided");
+    return <div>Error: Navigation context is not provided.</div>;
+  }
 
-    handleActiveChange(active);
-  }, [active]);
-
-
+  const { currentComponent } = navContext;
 
   return (
     <main className="lg:flex">
-      <div className="lg:w-1/5 ">
-        <Sidebar active={active} setActive={setActive} setPrevActive={setPrevActive} />
+      <div className="">
+        <Sidebar />
       </div>
-      <div className="lg:w-4/5">{currentComponent}</div>
+      <div className="w-full">{currentComponent}</div>
     </main>
   );
 };

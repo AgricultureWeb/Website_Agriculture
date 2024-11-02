@@ -1,9 +1,11 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import * as atlas from "azure-maps-control";
+import { set } from "@cloudinary/url-gen/actions/variable";
 
 interface AzureMapProps {
-  subscriptionKey: string ;
+  subscriptionKey: string;
+  setLocations?: (locations: any) => void;
 }
 interface POIResult {
   position: {
@@ -15,7 +17,10 @@ interface POIResult {
   };
 }
 
-const AzureMap: React.FC<AzureMapProps> = ({ subscriptionKey }) => {
+const AzureMap: React.FC<AzureMapProps> = ({
+  subscriptionKey,
+  setLocations,
+}) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
     null
@@ -82,60 +87,63 @@ const AzureMap: React.FC<AzureMapProps> = ({ subscriptionKey }) => {
       var lat = center[1];
       var url = `https://atlas.microsoft.com/search/poi/json?api-version=1.0&query=${query}&lat=${lat}&lon=${lon}&radius=${radius}`;
       console.log("url", url);
+      map?.events.add("ready", () => {
+        fetch(url, {
+          headers: {
+            "Subscription-Key": subscriptionKey,
+          },
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            console.log("response.results = ", response.results);
 
-      fetch(url, {
-        headers: {
-          "Subscription-Key": subscriptionKey,
-        },
-      })
-        .then((response) => response.json())
-        .then((response) => {
-          var bounds = [];
-          bounds.push([lon, lat]);
-          const labDataSource = new atlas.source.DataSource();
-          if (!map) return;
-          map.sources.add(labDataSource);
+            if (setLocations) setLocations(response.results);
 
-          response.results.forEach((result: POIResult) => {
-            console.log("result", result);
+            var bounds = [];
+            bounds.push([lon, lat]);
+            const labDataSource = new atlas.source.DataSource();
+            if (!map) return;
+            map.sources.add(labDataSource);
 
-            const point = new atlas.data.Point([
-              result.position.lon,
-              result.position.lat,
-            ]);
-            const feature = new atlas.data.Feature(point, {
-              name: result.poi.name,
+            response.results.forEach((result: POIResult) => {
+              const point = new atlas.data.Point([
+                result.position.lon,
+                result.position.lat,
+              ]);
+              const feature = new atlas.data.Feature(point, {
+                name: result.poi.name,
+              });
+              labDataSource.add(feature);
+              bounds.push([result.position.lon, result.position.lat]);
             });
-            labDataSource.add(feature);
-            bounds.push([result.position.lon, result.position.lat]);
-          });
 
-          const symbolLayer = new atlas.layer.SymbolLayer(
-            labDataSource,
-            undefined,
-            {
-              iconOptions: {
-                image: "pin-red",
-                anchor: "center",
-                allowOverlap: true,
-                offset: [0, -10],
-              },
-              textOptions: {
-                textField: ["get", "name"],
-                offset: [0, 1.2],
-              },
+            const symbolLayer = new atlas.layer.SymbolLayer(
+              labDataSource,
+              undefined,
+              {
+                iconOptions: {
+                  image: "pin-red",
+                  anchor: "center",
+                  allowOverlap: true,
+                  offset: [0, -10],
+                },
+                textOptions: {
+                  textField: ["get", "name"],
+                  offset: [0, 1.2],
+                },
+              }
+            );
+
+            map.layers.add(symbolLayer);
+
+            if (bounds.length > 0) {
+              map.setCamera({
+                bounds: atlas.data.BoundingBox.fromPositions(bounds),
+                padding: 50,
+              });
             }
-          );
-
-          map.layers.add(symbolLayer);
-
-          if (bounds.length > 0) {
-            map.setCamera({
-              bounds: atlas.data.BoundingBox.fromPositions(bounds),
-              padding: 50,
-            });
-          }
-        });
+          });
+      });
     };
 
     if (typeof window !== "undefined") {
