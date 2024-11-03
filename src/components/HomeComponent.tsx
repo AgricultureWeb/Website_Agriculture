@@ -31,10 +31,10 @@ const HomeComponent = () => {
           </div>
           <button
             className="bg-cover w-full bg-center bg-no-repeat rounded-lg text-center content-center text-3xl h-[250px]"
-            style={{  
+            style={{
               backgroundImage: `url('/assets/images/register-sample-bg.png')`,
             }}
-            onClick={() => router.push("/map")}
+            onClick={() => router.push("/register-soil-sample")}
           >
             Register Your Sample
           </button>

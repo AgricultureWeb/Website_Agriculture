@@ -6,6 +6,7 @@ import { set } from "@cloudinary/url-gen/actions/variable";
 interface AzureMapProps {
   subscriptionKey: string;
   setLocations?: (locations: any) => void;
+  destination: { lon: number; lat: number } | null;
 }
 interface POIResult {
   position: {
@@ -20,6 +21,7 @@ interface POIResult {
 const AzureMap: React.FC<AzureMapProps> = ({
   subscriptionKey,
   setLocations,
+  destination,
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(
@@ -48,8 +50,10 @@ const AzureMap: React.FC<AzureMapProps> = ({
         fill="#3478F5"
       />
     </svg>`;
+
   useEffect(() => {
     let map: atlas.Map | null = null;
+
     const loadMap = (center: [number, number]) => {
       if (!mapRef.current) return;
 
@@ -79,14 +83,13 @@ const AzureMap: React.FC<AzureMapProps> = ({
         }
       });
     };
-
     const loadLabs = (center: [number, number]) => {
       var query = "Soil Testing Laboratory";
       var radius = 10000;
       var lon = center[0];
       var lat = center[1];
       var url = `https://atlas.microsoft.com/search/poi/json?api-version=1.0&query=${query}&lat=${lat}&lon=${lon}&radius=${radius}`;
-      console.log("url", url);
+
       map?.events.add("ready", () => {
         fetch(url, {
           headers: {
@@ -145,21 +148,92 @@ const AzureMap: React.FC<AzureMapProps> = ({
           });
       });
     };
+    const getDirections = (position: { lon: number; lat: number }) => {
+      if (!userLocation || !destination) return;
+
+      map?.events.add("ready", () => {
+        if (!map) return;
+
+        const lineDatasource = new atlas.source.DataSource();
+        map.sources.add(lineDatasource);
+
+        map.layers.add(
+          new atlas.layer.LineLayer(lineDatasource, undefined, {
+            strokeColor: ["get", "strokeColor"],
+            strokeWidth: ["get", "strokeWidth"],
+            lineJoin: "round",
+            lineCap: "round",
+          }),
+          "labels"
+        );
+
+        //Start and end point input to the search route request
+        var query =
+          userLocation[1] +
+          "," +
+          userLocation[0] +
+          ":" +
+          destination.lat +
+          "," +
+          destination.lon;
+        //Make a search route request for a truck vehicle type
+        const truckRouteUrl = `https://atlas.microsoft.com/route/directions/json?api-version=1.0&travelMode=truck&vehicleWidth=2&vehicleHeight=2&vehicleLength=5&vehicleLoadType=USHazmatClass2&query=${query}`;
+
+        fetch(truckRouteUrl, {
+          headers: {
+            "Subscription-Key": subscriptionKey,
+          },
+        })
+          .then((response) => response.json())
+          .then((response) => {
+            var route = response.routes[0];
+            //Create an array to store the coordinates of each turn
+            var routeCoordinates: any[] = [];
+            route.legs.forEach((leg: any) => {
+              var legCoordinates = leg.points.map((point: any) => {
+                return [point.longitude, point.latitude];
+              });
+              //Add each turn to the array
+              routeCoordinates = routeCoordinates.concat(legCoordinates);
+            });
+
+            //Add the route line to the data source. We want this to render below the car route which will likely be added to the data source faster, so insert it at index 0.
+            lineDatasource.add(
+              new atlas.data.Feature(
+                new atlas.data.LineString(routeCoordinates),
+                {
+                  strokeColor: "#2272B9",
+                  strokeWidth: 9,
+                }
+              ),
+              0
+            );
+          });
+      });
+    };
 
     if (typeof window !== "undefined") {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            setUserLocation([longitude, latitude]);
-            loadMap([longitude, latitude]);
-            loadLabs([longitude, latitude]);
-          },
-          (error) => {
-            console.error("Error getting user location:", error);
-            loadMap([0, 0]);
+        if (!userLocation) {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const { latitude, longitude } = position.coords;
+              setUserLocation([longitude, latitude]);
+              loadMap([longitude, latitude]);
+              loadLabs([longitude, latitude]);
+            },
+            (error) => {
+              console.error("Error getting user location:", error);
+              loadMap([0, 0]);
+            }
+          );
+        } else {
+          loadMap(userLocation);
+          loadLabs(userLocation);
+          if (destination) {
+            getDirections(destination);
           }
-        );
+        }
       } else {
         console.error("Geolocation is not supported by this browser.");
         loadMap([0, 0]);
@@ -173,7 +247,7 @@ const AzureMap: React.FC<AzureMapProps> = ({
         map.dispose();
       }
     };
-  }, [subscriptionKey]);
+  }, [subscriptionKey, destination]);
 
   return <div ref={mapRef} className="h-full w-full"></div>;
 };

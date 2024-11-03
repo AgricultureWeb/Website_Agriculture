@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Readex_Pro } from "next/font/google";
 import "./globals.css";
 import NavigationState from "@/context/NavigationState";
+import RegisterationState from "@/context/RegisterationState";
 
 const readex = Readex_Pro({ subsets: ["latin", "latin-ext"] });
 
@@ -29,7 +30,9 @@ export default function RootLayout({
         ></script>
       </head>
       <body className={readex.className}>
-        <NavigationState>{children}</NavigationState>
+        <RegisterationState>
+          <NavigationState>{children}</NavigationState>
+        </RegisterationState>
       </body>
     </html>
   );

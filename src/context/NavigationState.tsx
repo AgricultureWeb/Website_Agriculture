@@ -9,12 +9,14 @@ import NewsComponent from "../components/NewsComponent";
 import SupportComponent from "../components/SupportComponent";
 import PrivacyComponent from "../components/PrivacyComponent";
 import HelpComponent from "../components/HelpComponent";
+import { useRouter } from "next/navigation";
 
 interface NavigationStateProps {
   children: ReactNode;
 }
 
 const NavigationState: React.FC<NavigationStateProps> = ({ children }) => {
+  const router = useRouter();
   const [active, setActive] = useState<string>("home");
   const [prevActive, setPrevActive] = useState<string>("home");
   const [currentComponent, setCurrentComponent] = useState<ReactNode>(
@@ -24,6 +26,7 @@ const NavigationState: React.FC<NavigationStateProps> = ({ children }) => {
 
   useEffect(() => {
     const handleActiveChange = (active: string) => {
+      router.push(`/`);
       switch (active) {
         case "account":
           setCurrentComponent(<AccountComponent />);

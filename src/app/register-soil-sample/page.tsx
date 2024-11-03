@@ -10,8 +10,11 @@ import Call from "../../../public/assets/icons/call.svg";
 import Bookmark from "../../../public/assets/icons/Bookmark.svg";
 import Directions from "../../../public/assets/icons/Directions.svg";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import RegisterationContext from "@/context/registerationContext";
 
 const Page = () => {
+  const [destination, setDestination] = useState<{ lat: number; lon: number } | null>(null);
   const router = useRouter();
   const subscriptionKey =
     process.env.NEXT_PUBLIC_AZURE_MAP_SUBSCRIPTION_KEY || "";
@@ -30,6 +33,24 @@ const Page = () => {
   const { setActive, prevActive } = navContext;
 
   const [locations, setLocations] = useState<any[]>([]);
+
+  const registerationContext = useContext(RegisterationContext);
+
+  if (!registerationContext) {
+    console.error("Registeration context is not provided");
+    return <div>Error: Registeration context is not provided.</div>;
+  }
+
+  const { setLocation } = registerationContext;
+
+  const handleProceedClick = (location: any) => {
+    setLocation(location);
+    router.push("/register-soil-sample/registration-form");
+  };
+
+  const getDirections = (position: any) => {
+    setDestination(position);
+  };
 
   return (
     <>
@@ -76,7 +97,7 @@ const Page = () => {
                         />
                         Call
                       </button>
-                      <button className="location_utility_button">
+                      <button className="location_utility_button" onClick={() => getDirections(location.position)}>
                         <Image
                           src={Directions}
                           width={20}
@@ -97,7 +118,12 @@ const Page = () => {
                         Save
                       </button>
                     </div>
-                    <button className="bg-primary_green text-white text-sm font-light rounded-full px-4 py-0.5 flex mx-auto my-5">
+                    <button
+                      onClick={() => {
+                        handleProceedClick(location);
+                      }}
+                      className="bg-primary_green w-fit text-white text-sm font-light rounded-full px-4 py-0.5 flex mx-auto my-5"
+                    >
                       Proceed
                     </button>
                   </div>
@@ -110,6 +136,7 @@ const Page = () => {
           <AzureMap
             subscriptionKey={subscriptionKey}
             setLocations={setLocations}
+            destination={destination}
           />
         </div>
       </div>
