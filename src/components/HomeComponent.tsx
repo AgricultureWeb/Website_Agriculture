@@ -1,14 +1,34 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import globe from "../../public/assets/icons/globe.svg";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import UserContext from "@/context/userContext";
 
 const HomeComponent = () => {
   const router = useRouter();
+
+  const userContext = useContext(UserContext);
+  if (!userContext) {
+    console.log("User context is not provided", userContext);
+
+    console.error("User context is not provided");
+    return <div>Error: User context is not provided.</div>;
+  }
+
+  const { user, getUserData } = userContext;
+
+  useEffect(() => {
+    if (!user) {
+      getUserData();
+    }
+  }, [user]);
+
   return (
     <section className="p-3 overflow-y-auto h-screen">
       <div className="flex justify-between">
-        <h1 className="text-4xl font-bold">Hello Username</h1>
+        <h1 className="text-4xl font-bold">
+          {user ? `Hello  ${user.name}` : "Loading..."}
+        </h1>
         <Image src={globe} width={30} height={30} alt="globe" />
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 text-white md:h-[500px] my-5">

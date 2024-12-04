@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useContext } from "react";
 import { useRouter } from "next/navigation";
-import RegisterationContext from "@/context/registerationContext";
+import UserContext from "@/context/userContext";
 import Sidebar from "@/components/Sidebar";
 import navigationContext from "@/context/navigationContext";
 import Image from "next/image";
@@ -10,12 +10,12 @@ import backArrow from "../../../../public/assets/icons/back-arrow.svg";
 import RegistrationForm from "@/components/RegisterationForm";
 
 const page = () => {
-  const registerationContext = useContext(RegisterationContext);
+  const userContext = useContext(UserContext);
   const navContext = useContext(navigationContext);
 
-  if (!registerationContext) {
-    console.error("Registeration context is not provided");
-    return <div>Error: Registeration context is not provided.</div>;
+  if (!userContext) {
+    console.error("User context is not provided");
+    return <div>Error: User context is not provided.</div>;
   }
 
   if (!navContext) {
@@ -24,7 +24,7 @@ const page = () => {
   }
 
   const { setActive, prevActive } = navContext;
-  const { location } = registerationContext;
+  const { location } = userContext;
   const router = useRouter();
 
   useEffect(() => {

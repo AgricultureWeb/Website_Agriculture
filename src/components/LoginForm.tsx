@@ -1,13 +1,19 @@
 "use client";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import eyeClosed from "../../public/assets/icons/eyeClosed.svg";
 import eyeOpen from "../../public/assets/icons/eyeOpen.svg";
 import Image from "next/image";
+import UserContext from "@/context/userContext";
 
 const LoginForm = () => {
   const validationSchema = Yup.object({
+    role: Yup.string().required("Required"),
+    agree: Yup.boolean().oneOf(
+      [true],
+      "You must agree to the terms and conditions"
+    ),
     username: Yup.string().required("Required"),
     password: Yup.string()
       .min(6, "Password must be at least 6 characters")
@@ -16,19 +22,28 @@ const LoginForm = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
+  const userContext = useContext(UserContext);
+  if (!userContext) {
+    throw new Error(
+      "UserContext must be used within a RegisterationProvider"
+    );
+  }
+
+  const { login, loading } = userContext;
+
   return (
     <>
       <h1 className="font-bold text-4xl text-center mt-11">Login</h1>
       <Formik
         initialValues={{
-          userType: "",
+          role: "",
           username: "",
           password: "",
           agree: false,
         }}
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          console.log(values);
+          login(values);
         }}
       >
         {() => (
@@ -41,7 +56,7 @@ const LoginForm = () => {
               <label>
                 <Field
                   type="radio"
-                  name="picked"
+                  name="role"
                   value="farmer"
                   className="mx-2"
                 />
@@ -50,12 +65,19 @@ const LoginForm = () => {
               <label>
                 <Field
                   type="radio"
-                  name="picked"
+                  name="role"
                   value="soilAgent"
                   className="mx-2"
                 />
                 Soil Agent
               </label>
+            </div>
+            <div className="mb-7 h-5">
+              <ErrorMessage
+                name="role"
+                component="div"
+                className="text-sm text-red-400"
+              />
             </div>
             <Field
               className="input-field custom-placeholder"
@@ -105,9 +127,16 @@ const LoginForm = () => {
                 Agree to the Terms and Conditions
               </label>
             </div>
+            <div className="mb-7 h-5">
+              <ErrorMessage
+                name="agree"
+                component="div"
+                className="text-sm text-red-400"
+              />
+            </div>
 
             <button type="submit" className="primary-green-bg-button">
-              Login
+              {loading ? "Processing..." : "Login"}
             </button>
           </Form>
         )}

@@ -11,10 +11,13 @@ import Bookmark from "../../../public/assets/icons/Bookmark.svg";
 import Directions from "../../../public/assets/icons/Directions.svg";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import RegisterationContext from "@/context/registerationContext";
+import UserContext from "@/context/userContext";
 
 const Page = () => {
-  const [destination, setDestination] = useState<{ lat: number; lon: number } | null>(null);
+  const [destination, setDestination] = useState<{
+    lat: number;
+    lon: number;
+  } | null>(null);
   const router = useRouter();
   const subscriptionKey =
     process.env.NEXT_PUBLIC_AZURE_MAP_SUBSCRIPTION_KEY || "";
@@ -34,14 +37,14 @@ const Page = () => {
 
   const [locations, setLocations] = useState<any[]>([]);
 
-  const registerationContext = useContext(RegisterationContext);
+  const userContext = useContext(UserContext);
 
-  if (!registerationContext) {
-    console.error("Registeration context is not provided");
-    return <div>Error: Registeration context is not provided.</div>;
+  if (!userContext) {
+    console.error("User context is not provided");
+    return <div>Error: User context is not provided.</div>;
   }
 
-  const { setLocation } = registerationContext;
+  const { setLocation } = userContext;
 
   const handleProceedClick = (location: any) => {
     setLocation(location);
@@ -66,16 +69,17 @@ const Page = () => {
             </button>
             <span className="w-full text-center">Choose Location</span>
           </div>
-          <div className="overflow-auto h-96 lg:h-auto pb-10 lg:pb-0">
+          <div className="overflow-auto h-full pb-10 lg:pb-0 ">
             {locations.length > 0 &&
               locations.map((location) => (
-                <>
-                  <div key={location.id} className="w-fit mx-auto mt-5">
+                <div>
+                  <div key={location.id} className="w-80 mx-auto mt-5">
                     <Image
                       src={placeholder_lab}
                       height={300}
                       width={300}
                       alt={"lab"}
+                      className="mx-auto"
                     />
                     <h2 className="mt-3 text-sm">
                       {location.poi.name},{" "}
@@ -97,7 +101,10 @@ const Page = () => {
                         />
                         Call
                       </button>
-                      <button className="location_utility_button" onClick={() => getDirections(location.position)}>
+                      <button
+                        className="location_utility_button"
+                        onClick={() => getDirections(location.position)}
+                      >
                         <Image
                           src={Directions}
                           width={20}
@@ -128,7 +135,7 @@ const Page = () => {
                     </button>
                   </div>
                   <hr />
-                </>
+                </div>
               ))}
           </div>
         </div>

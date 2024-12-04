@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import backArrow from "../../public/assets/icons/back-arrow.svg";
 import globe from "../../public/assets/icons/globe.svg";
 import bookmark from "../../public/assets/icons/bookmark.svg";
 import clock from "../../public/assets/icons/Clock.svg";
 import newsPlaceholderBg from "../../public/assets/images/news-placeholder-bg.png";
 import Image from "next/image";
+import { customImageLoader } from "@/utils/customImageLoader";
 
 interface NewsComponentProps {
   setActive: (active: string) => void;
@@ -15,8 +16,54 @@ const NewsComponent: React.FC<NewsComponentProps> = ({
   setActive,
   prevActive,
 }) => {
+  const [news, setNews] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const getNews = async () => {
+      try {
+        setLoading(true);
+        const url =
+          `https://newsapi.org/v2/everything?` +
+          `q=farmer+india` +
+          `&language=en` +
+          `&sortBy=popularity` +
+          `&apiKey=${process.env.NEXT_PUBLIC_NEWS_API_KEY}` +
+          `&pageSize=30`;
+
+        const req = new Request(url);
+
+        fetch(req).then(async function (response) {
+          let data = await response.json();
+          setNews(data.articles);
+          setLoading(false);
+        });
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+    if (news.length === 0) {
+      getNews();
+    }
+  }, []);
+
+  const getTitle = (title: string) => {
+    if (title.length > 55) {
+      return title.slice(0, 55) + "...";
+    }
+    return title;
+  };
+
+  const goToNews = (url: string) => () => {
+    window.open(url, "_blank");
+  };
+
+  const getMinutesRead = (description: string) => {
+    return Math.ceil(description.split(" ").length / 200);
+  };
+
   return (
-    <div>
+    <div className="h-screen overflow-hidden">
       <div className="flex justify-between text-2xl px-3 py-2 border-b-2 border-b-gray-400">
         <button onClick={() => setActive(prevActive)}>
           {" "}
@@ -27,146 +74,47 @@ const NewsComponent: React.FC<NewsComponentProps> = ({
           <Image src={globe} width={30} height={30} alt="globe" />
         </button>
       </div>
-      <div className="relative -z-10 flex flex-wrap m-3">
-        <div className="w-full sm:w-1/2 lg:w-1/4">
-          <div className="mr-3 mb-3 ">
-            <div className="relative">
-              <Image
-                className="rounded-t-lg w-full"
-                src={newsPlaceholderBg}
-                alt="news"
-              />
-              <span className="absolute rounded-full p-2 bg-[#27612B] top-2 right-2">
-                <Image src={bookmark} alt="mark" width={8} height={4} />
-              </span>
-              <div className="bg-secondary_green rounded-b-lg p-2">
-                <p className="text-lg">
-                  Millet production stagnates in India:RBI Annual Report
-                </p>
-                <span className="text-xs text-gray-500 flex mt-3">
-                  <Image src={clock} width={18} height={18} alt="clock" />
-                  10 minutes read
-                </span>
+      {loading? <div>loading...</div>:
+        <div className="relative flex flex-wrap m-3 mb-10 overflow-auto h-screen">
+        {news.map((element: any) => {
+          if (
+            element.title !== "[Removed]" &&
+            element.description !== "[Removed]" &&
+            element.url !== "[Removed]"
+          ) {
+            return (
+              <div
+                className="w-full sm:w-1/2 lg:w-1/4 cursor-pointer"
+                key={element.url}
+                onClick={goToNews(element.url)}
+              >
+                <div className="mr-3 mb-3 ">
+                  <div className="relative">
+                    <Image
+                      className="rounded-t-lg h-[200px]"
+                      src={element.urlToImage || newsPlaceholderBg}
+                      alt="news"
+                      width={500}
+                      height={300}
+                      loader={customImageLoader}
+                    />
+                    <span className="absolute rounded-full p-2 bg-[#27612B] top-2 right-2">
+                      <Image src={bookmark} alt="mark" width={8} height={4} />
+                    </span>
+                    <div className="bg-secondary_green rounded-b-lg p-2 h-[110px]">
+                      <p className="text-lg">{getTitle(element.title)}</p>
+                      <span className="text-xs text-gray-500 flex mt-3">
+                        <Image src={clock} width={18} height={18} alt="clock" />
+                        {getMinutesRead(element.description)} minutes read
+                      </span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-full sm:w-1/2 lg:w-1/4">
-          <div className="mr-3 mb-3 ">
-            <div className="relative">
-              <Image
-                className="rounded-t-lg w-full"
-                src={newsPlaceholderBg}
-                alt="news"
-              />
-              <span className="absolute rounded-full p-2 bg-[#27612B] top-2 right-2">
-                <Image src={bookmark} alt="mark" width={8} height={4} />
-              </span>
-              <div className="bg-secondary_green rounded-b-lg p-2">
-                <p className="text-lg">
-                  Millet production stagnates in India:RBI Annual Report
-                </p>
-                <span className="text-xs text-gray-500 flex mt-3">
-                  <Image src={clock} width={18} height={18} alt="clock" />
-                  10 minutes read
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-full sm:w-1/2 lg:w-1/4">
-          <div className="mr-3 mb-3 ">
-            <div className="relative">
-              <Image
-                className="rounded-t-lg w-full"
-                src={newsPlaceholderBg}
-                alt="news"
-              />
-              <span className="absolute rounded-full p-2 bg-[#27612B] top-2 right-2">
-                <Image src={bookmark} alt="mark" width={8} height={4} />
-              </span>
-              <div className="bg-secondary_green rounded-b-lg p-2">
-                <p className="text-lg">
-                  Millet production stagnates in India:RBI Annual Report
-                </p>
-                <span className="text-xs text-gray-500 flex mt-3">
-                  <Image src={clock} width={18} height={18} alt="clock" />
-                  10 minutes read
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-full sm:w-1/2 lg:w-1/4">
-          <div className="mr-3 mb-3 ">
-            <div className="relative">
-              <Image
-                className="rounded-t-lg w-full"
-                src={newsPlaceholderBg}
-                alt="news"
-              />
-              <span className="absolute rounded-full p-2 bg-[#27612B] top-2 right-2">
-                <Image src={bookmark} alt="mark" width={8} height={4} />
-              </span>
-              <div className="bg-secondary_green rounded-b-lg p-2">
-                <p className="text-lg">
-                  Millet production stagnates in India:RBI Annual Report
-                </p>
-                <span className="text-xs text-gray-500 flex mt-3">
-                  <Image src={clock} width={18} height={18} alt="clock" />
-                  10 minutes read
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-full sm:w-1/2 lg:w-1/4">
-          <div className="mr-3 mb-3 ">
-            <div className="relative">
-              <Image
-                className="rounded-t-lg w-full"
-                src={newsPlaceholderBg}
-                alt="news"
-              />
-              <span className="absolute rounded-full p-2 bg-[#27612B] top-2 right-2">
-                <Image src={bookmark} alt="mark" width={8} height={4} />
-              </span>
-              <div className="bg-secondary_green rounded-b-lg p-2">
-                <p className="text-lg">
-                  Millet production stagnates in India:RBI Annual Report
-                </p>
-                <span className="text-xs text-gray-500 flex mt-3">
-                  <Image src={clock} width={18} height={18} alt="clock" />
-                  10 minutes read
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="w-full sm:w-1/2 lg:w-1/4">
-          <div className="mr-3 mb-3 ">
-            <div className="relative">
-              <Image
-                className="rounded-t-lg w-full"
-                src={newsPlaceholderBg}
-                alt="news"
-              />
-              <span className="absolute rounded-full p-2 bg-[#27612B] top-2 right-2">
-                <Image src={bookmark} alt="mark" width={8} height={4} />
-              </span>
-              <div className="bg-secondary_green rounded-b-lg p-2">
-                <p className="text-lg">
-                  Millet production stagnates in India:RBI Annual Report
-                </p>
-                <span className="text-xs text-gray-500 flex mt-3">
-                  <Image src={clock} width={18} height={18} alt="clock" />
-                  10 minutes read
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            );
+          }
+        })}
+      </div>}
     </div>
   );
 };

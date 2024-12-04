@@ -15,13 +15,14 @@ import news from "../../public/assets/icons/News.svg";
 import support from "../../public/assets/icons/Support.svg";
 import privacy from "../../public/assets/icons/Privacy.svg";
 import settings from "../../public/assets/icons/Settings.svg";
+import logoutIcn from "../../public/assets/icons/logout.svg";
 import test from "../../public/assets/icons/Test.svg";
-import logout from "../../public/assets/icons/Logout.svg";
 import logo from "../../public/assets/images/logo.png";
 import right_arrow from "../../public/assets/icons/right_arrow.svg";
 import logo_small from "../../public/assets/images/logo_small.png";
 import Image from "next/image";
 import navigationContext from "@/context/navigationContext";
+import UserContext from "@/context/userContext";
 
 const Sidebar = () => {
   const navContext = useContext(navigationContext);
@@ -38,6 +39,15 @@ const Sidebar = () => {
     if (setPrevActive) setPrevActive(active);
     setActive(component);
   };
+
+  const userContext = useContext(UserContext);
+  if (!userContext) {
+    throw new Error(
+      "UserContext must be used within a RegisterationProvider"
+    );
+  }
+
+  const { logout } = userContext;
   return (
     <>
       {/* // Desktop Sidebar */}
@@ -218,15 +228,12 @@ const Sidebar = () => {
             />
             {sidebarOpen ? "FAQs" : " "}
           </button>
-          <button
-            onClick={() => console.log("logout")}
-            className="flex side-button"
-          >
+          <button onClick={() => logout()} className="flex side-button">
             <Image
               priority
               className="mr-3 my-auto"
               color="red"
-              src={logout}
+              src={logoutIcn}
               width={sidebarOpen ? 20 : 30}
               height={sidebarOpen ? 20 : 30}
               alt="logout"
@@ -463,15 +470,12 @@ const Sidebar = () => {
                 alt="FAQs"
               />
             </button>
-            <button
-              onClick={() => console.log("logout")}
-              className="side-button-mobile"
-            >
+            <button onClick={() => logout()} className="side-button-mobile">
               <span className="flex">
                 <Image
                   priority
                   className="mr-3 my-auto"
-                  src={logout}
+                  src={logoutIcn}
                   width={30}
                   height={30}
                   alt="logout"

@@ -26,7 +26,6 @@ const NavigationState: React.FC<NavigationStateProps> = ({ children }) => {
 
   useEffect(() => {
     const handleActiveChange = (active: string) => {
-      router.push(`/`);
       switch (active) {
         case "account":
           setCurrentComponent(<AccountComponent />);
