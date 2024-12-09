@@ -1,13 +1,35 @@
 "use client";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import SignupForm from "@/components/SignupForm";
 import Image from "next/image";
 import logo from "../../../public/assets/images/logo.png";
 import globe from "../../../public/assets/icons/globe.svg";
 import arrowDown from "../../../public/assets/icons/arrowDown.svg";
 import Link from "next/link";
+import UserContext from "@/context/userContext";
+import { useRouter } from "next/navigation";
 
 const page = () => {
+  const router = useRouter();
+  const userContext = useContext(UserContext);
+
+  if (!userContext) {
+    console.log("User context is not provided", userContext);
+
+    console.error("User context is not provided");
+    return <div>Error: User context is not provided.</div>;
+  }
+
+  const { isLoggedIn } = userContext;
+
+  useEffect(() => {
+    isLoggedIn().then((loggedIn) => {
+      if (loggedIn) {
+        router.push("/");
+      }
+    });
+  }, []);
+
   return (
     <section className="h-screen flex overflow-hidden">
       <div className="w-full lg:w-[40%] px-20 content-center h-screen overflow-y-auto ">
@@ -37,7 +59,7 @@ const page = () => {
             src={globe}
             width={20}
             height={20}
-            alt="Follow us on Twitter"
+            alt="globe"
           />{" "}
           English{" "}
           <Image
@@ -46,7 +68,7 @@ const page = () => {
             width={15}
             height={15}
             src={arrowDown}
-            alt="Follow us on Twitter"
+            alt="down"
           />
         </button>
 

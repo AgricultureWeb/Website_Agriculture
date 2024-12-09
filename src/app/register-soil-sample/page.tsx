@@ -15,8 +15,8 @@ import UserContext from "@/context/userContext";
 
 const Page = () => {
   const [destination, setDestination] = useState<{
-    lat: number;
-    lon: number;
+    latitude: number;
+    longitude: number;
   } | null>(null);
   const router = useRouter();
   const subscriptionKey =
@@ -44,15 +44,22 @@ const Page = () => {
     return <div>Error: User context is not provided.</div>;
   }
 
-  const { setLocation } = userContext;
+  const handleProceedClick = (id: string) => {
+    const url = "/register-soil-sample/" + id;
+    console.log("Navigating to:", url);
 
-  const handleProceedClick = (location: any) => {
-    setLocation(location);
-    router.push("/register-soil-sample/registration-form");
+    router.push(url);
   };
 
-  const getDirections = (position: any) => {
-    setDestination(position);
+  const getDirections = (position: { latitude: number; longitude: number }) => {
+    console.log("Getting directions to:", position);
+
+    if (position && position.latitude && position.longitude) {
+      setDestination(position);
+      console.log("Getting directions to:", position);
+    } else {
+      console.error("Invalid position data:", position);
+    }
   };
 
   return (
@@ -72,23 +79,23 @@ const Page = () => {
           <div className="overflow-auto h-full pb-10 lg:pb-0 ">
             {locations.length > 0 &&
               locations.map((location) => (
-                <div>
-                  <div key={location.id} className="w-80 mx-auto mt-5">
+                <div key={location.id}>
+                  <div className="w-80 mx-auto mt-5">
                     <Image
                       src={placeholder_lab}
                       height={300}
                       width={300}
                       alt={"lab"}
                       className="mx-auto"
+                      priority
                     />
                     <h2 className="mt-3 text-sm">
-                      {location.poi.name},{" "}
-                      {location.address.countrySubdivisionName}
+                      {location.name}, {location.address.district}
                     </h2>
                     <p className="text-xs mt-2">
-                      Address: {location.address.freeformAddress}
+                      Address: {location.address.fulladdress}
                     </p>
-                    <p className="text-xs mt-2">Phone: xxxxxxxxxx</p>
+                    <p className="text-xs mt-2">Phone: {location.phone}</p>
 
                     <div className="flex justify-around mt-5">
                       <button className="location_utility_button">
@@ -97,10 +104,11 @@ const Page = () => {
                           width={20}
                           height={20}
                           alt="call"
-                          className="mr-1"
+                          className="mr-1 "
                         />
                         Call
                       </button>
+
                       <button
                         className="location_utility_button"
                         onClick={() => getDirections(location.position)}
@@ -110,7 +118,7 @@ const Page = () => {
                           width={20}
                           height={20}
                           alt="Directions"
-                          className="mr-1"
+                          className="mr-1 "
                         />
                         Directions
                       </button>
@@ -120,14 +128,14 @@ const Page = () => {
                           width={20}
                           height={20}
                           alt="Save"
-                          className="mr-1"
+                          className="mr-1 "
                         />
                         Save
                       </button>
                     </div>
                     <button
                       onClick={() => {
-                        handleProceedClick(location);
+                        handleProceedClick(location.id);
                       }}
                       className="bg-primary_green w-fit text-white text-sm font-light rounded-full px-4 py-0.5 flex mx-auto my-5"
                     >

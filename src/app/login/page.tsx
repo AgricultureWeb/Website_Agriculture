@@ -1,13 +1,35 @@
 "use client";
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import LoginForm from "@/components/LoginForm";
 import Image from "next/image";
 import logo from "../../../public/assets/images/logo.png";
 import globe from "../../../public/assets/icons/globe.svg";
 import arrowDown from "../../../public/assets/icons/arrowDown.svg";
 import Link from "next/link";
+import UserContext from "@/context/userContext";
+import { useRouter } from "next/navigation";
 
 const page = () => {
+  const router = useRouter();
+  const userContext = useContext(UserContext);
+
+  if (!userContext) {
+    console.log("User context is not provided", userContext);
+
+    console.error("User context is not provided");
+    return <div>Error: User context is not provided.</div>;
+  }
+
+  const { isLoggedIn } = userContext;
+
+  useEffect(() => {
+    isLoggedIn().then((loggedIn) => {
+      if (loggedIn) {
+        router.push("/");
+      }
+    });
+  }, []);
+
   return (
     <section className="h-screen flex overflow-hidden">
       <div className="w-full lg:w-[40%] px-20 content-center h-screen overflow-y-auto ">
@@ -32,7 +54,7 @@ const page = () => {
       >
         <button className="flex bg-secondary_green content-center rounded-lg px-5 py-0.5 m-3">
           <Image
-            className="my-auto mr-2"
+            className="my-auto mr-2 "
             priority
             src={globe}
             width={20}

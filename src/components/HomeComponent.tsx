@@ -29,7 +29,12 @@ const HomeComponent = () => {
         <h1 className="text-4xl font-bold">
           {user ? `Hello  ${user.name}` : "Loading..."}
         </h1>
-        <Image src={globe} width={30} height={30} alt="globe" />
+        <Image
+          src={globe}
+          width={30}
+          height={30}
+          alt="globe"
+        />
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 text-white md:h-[500px] my-5">
         <div

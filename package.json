@@ -18,6 +18,7 @@
     "bcrypt": "^5.1.1",
     "firebase": "^11.0.1",
     "formik": "^2.4.6",
+    "jose": "^5.9.6",
     "jsonwebtoken": "^9.0.2",
     "newsapi": "^2.4.1",
     "next": "14.2.4",

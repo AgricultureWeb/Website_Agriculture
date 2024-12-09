@@ -3,12 +3,13 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import Image from "next/image";
+import { Lab } from "@/models/Labs";
 
 interface RegisterationFormProps {
-  location: any;
+  lab: Lab;
 }
 
-const RegisterationForm: React.FC<RegisterationFormProps> = ({ location }) => {
+const RegisterationForm: React.FC<RegisterationFormProps> = ({ lab }) => {
   const validationSchema = Yup.object({
     farmName: Yup.string().required("Required"),
     samples: Yup.array()
@@ -89,15 +90,19 @@ const RegisterationForm: React.FC<RegisterationFormProps> = ({ location }) => {
               )}
             </FieldArray>
 
-            <div className="bg-[#eeebeb] rounded-xl p-3 mt-6">
-              <h2 className="text-lg">
-                {location.poi.name}, {location.address.countrySubdivisionName}
-              </h2>
-              <p className=" mt-2 font-light">
-                Address: {location.address.freeformAddress}
-              </p>
-              <p className="mt-2 font-light">Phone: xxxxxxxxxx</p>
-            </div>
+            {lab.name ? (
+              <div className="bg-[#eeebeb] rounded-xl p-3 mt-6">
+                <h2 className="text-lg">
+                  {lab.name}, {lab.address?.district}
+                </h2>
+                <p className=" mt-2 font-light">
+                  Address: {lab.address?.fulladdress}
+                </p>
+                <p className="mt-2 font-light">Phone: {lab.phone}</p>
+              </div>
+            ) : (
+              <div>Loading...</div>
+            )}
 
             <button type="submit" className="primary-green-bg-button">
               Register

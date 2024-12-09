@@ -86,7 +86,7 @@ const Sidebar = () => {
           >
             <Image
               priority
-              className="mr-3 my-auto"
+              className="mr-3 my-auto "
               color="red"
               src={active === "home" ? home_active : home}
               width={sidebarOpen ? 20 : 30}
@@ -105,7 +105,7 @@ const Sidebar = () => {
           >
             <Image
               priority
-              className="mr-3 my-auto"
+              className="mr-3 my-auto "
               color="red"
               src={active === "account" ? account_active : account}
               width={sidebarOpen ? 20 : 30}
@@ -124,7 +124,7 @@ const Sidebar = () => {
           >
             <Image
               priority
-              className="mr-3 my-auto"
+              className="mr-3 my-auto "
               color="red"
               src={active === "settings" ? settings_active : settings}
               width={sidebarOpen ? 20 : 30}
@@ -143,7 +143,7 @@ const Sidebar = () => {
           >
             <Image
               priority
-              className="mr-3 my-auto"
+              className="mr-3 my-auto "
               color="red"
               src={active === "test" ? test_active : test}
               width={sidebarOpen ? 20 : 30}
@@ -162,7 +162,7 @@ const Sidebar = () => {
           >
             <Image
               priority
-              className="mr-3 my-auto"
+              className="mr-3 my-auto "
               color="red"
               src={active === "news" ? news_active : news}
               width={sidebarOpen ? 20 : 30}
@@ -181,7 +181,7 @@ const Sidebar = () => {
           >
             <Image
               priority
-              className="mr-3 my-auto"
+              className="mr-3 my-auto "
               color="red"
               src={active === "support" ? support_active : support}
               width={sidebarOpen ? 20 : 30}
@@ -200,7 +200,7 @@ const Sidebar = () => {
           >
             <Image
               priority
-              className="mr-3 my-auto"
+              className="mr-3 my-auto "
               color="red"
               src={active === "privacy" ? privacy_active : privacy}
               width={sidebarOpen ? 20 : 30}
@@ -219,7 +219,7 @@ const Sidebar = () => {
           >
             <Image
               priority
-              className="mr-3 my-auto"
+              className="mr-3 my-auto "
               color="red"
               src={active === "help" ? help_active : help}
               width={sidebarOpen ? 20 : 30}
@@ -231,7 +231,7 @@ const Sidebar = () => {
           <button onClick={() => logout()} className="flex side-button">
             <Image
               priority
-              className="mr-3 my-auto"
+              className="mr-3 my-auto "
               color="red"
               src={logoutIcn}
               width={sidebarOpen ? 20 : 30}
@@ -285,7 +285,7 @@ const Sidebar = () => {
               <span className="flex">
                 <Image
                   priority
-                  className="mr-3 my-auto"
+                  className="mr-3 my-auto "
                   src={home}
                   width={30}
                   height={30}
@@ -295,10 +295,10 @@ const Sidebar = () => {
               </span>
               <Image
                 priority
-                className="mr-3 my-auto"
+                className="mr-3 my-auto "
                 src={right_arrow}
-                width={18}
-                height={18}
+                width={12}
+                height={12}
                 alt="Home"
               />
             </button>
@@ -309,7 +309,7 @@ const Sidebar = () => {
               <span className="flex">
                 <Image
                   priority
-                  className="mr-3 my-auto"
+                  className="mr-3 my-auto "
                   src={account}
                   width={25}
                   height={25}
@@ -319,7 +319,7 @@ const Sidebar = () => {
               </span>
               <Image
                 priority
-                className="mr-3 my-auto"
+                className="mr-3 my-auto "
                 src={right_arrow}
                 width={18}
                 height={18}
@@ -333,7 +333,7 @@ const Sidebar = () => {
               <span className="flex">
                 <Image
                   priority
-                  className="mr-3 my-auto"
+                  className="mr-3 my-auto "
                   src={settings}
                   width={30}
                   height={30}
@@ -343,7 +343,7 @@ const Sidebar = () => {
               </span>
               <Image
                 priority
-                className="mr-3 my-auto"
+                className="mr-3 my-auto "
                 src={right_arrow}
                 width={18}
                 height={18}
@@ -357,7 +357,7 @@ const Sidebar = () => {
               <span className="flex">
                 <Image
                   priority
-                  className="mr-3 my-auto"
+                  className="mr-3 my-auto "
                   src={active === "test" ? test_active : test}
                   width={30}
                   height={30}
@@ -367,7 +367,7 @@ const Sidebar = () => {
               </span>
               <Image
                 priority
-                className="mr-3 my-auto"
+                className="mr-3 my-auto "
                 src={right_arrow}
                 width={18}
                 height={18}
@@ -381,7 +381,7 @@ const Sidebar = () => {
               <span className="flex">
                 <Image
                   priority
-                  className="mr-3 my-auto"
+                  className="mr-3 my-auto "
                   src={active === "news" ? news_active : news}
                   width={30}
                   height={30}
@@ -391,7 +391,7 @@ const Sidebar = () => {
               </span>
               <Image
                 priority
-                className="mr-3 my-auto"
+                className="mr-3 my-auto "
                 src={right_arrow}
                 width={18}
                 height={18}
@@ -405,7 +405,7 @@ const Sidebar = () => {
               <span className="flex">
                 <Image
                   priority
-                  className="mr-3 my-auto"
+                  className="mr-3 my-auto "
                   src={active === "support" ? support_active : support}
                   width={30}
                   height={30}
@@ -415,7 +415,7 @@ const Sidebar = () => {
               </span>
               <Image
                 priority
-                className="mr-3 my-auto"
+                className="mr-3 my-auto "
                 src={right_arrow}
                 width={18}
                 height={18}
@@ -429,7 +429,7 @@ const Sidebar = () => {
               <span className="flex">
                 <Image
                   priority
-                  className="mr-3 my-auto"
+                  className="mr-3 my-auto "
                   src={active === "privacy" ? privacy_active : privacy}
                   width={30}
                   height={30}
@@ -439,7 +439,7 @@ const Sidebar = () => {
               </span>
               <Image
                 priority
-                className="mr-3 my-auto"
+                className="mr-3 my-auto "
                 src={right_arrow}
                 width={18}
                 height={18}
@@ -453,7 +453,7 @@ const Sidebar = () => {
               <span className="flex">
                 <Image
                   priority
-                  className="mr-3 my-auto"
+                  className="mr-3 my-auto "
                   src={active === "help" ? help_active : help}
                   width={30}
                   height={30}
@@ -463,7 +463,7 @@ const Sidebar = () => {
               </span>
               <Image
                 priority
-                className="mr-3 my-auto"
+                className="mr-3 my-auto "
                 src={right_arrow}
                 width={18}
                 height={18}
@@ -474,7 +474,7 @@ const Sidebar = () => {
               <span className="flex">
                 <Image
                   priority
-                  className="mr-3 my-auto"
+                  className="mr-3 my-auto "
                   src={logoutIcn}
                   width={30}
                   height={30}
@@ -484,7 +484,7 @@ const Sidebar = () => {
               </span>
               <Image
                 priority
-                className="mr-3 my-auto"
+                className="mr-3 my-auto "
                 src={right_arrow}
                 width={18}
                 height={18}

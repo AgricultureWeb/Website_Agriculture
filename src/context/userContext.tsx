@@ -1,8 +1,6 @@
 import { createContext } from "react";
 
 interface UserContextType {
-  location: object | null;
-  setLocation: (location: object) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
   signup: (values: any) => void;
@@ -10,6 +8,7 @@ interface UserContextType {
   login: (values: any) => void;
   getUserData: () => void;
   user: any;
+  isLoggedIn: () => Promise<boolean>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);

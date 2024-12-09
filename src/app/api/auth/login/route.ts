@@ -11,12 +11,9 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const { username, password, role } = body;
-    console.log(body);
 
     const userDocRef = doc(db, "users", username);
     const userDoc = await getDoc(userDocRef);
-
-    console.log(userDoc);
 
     if (!userDoc.exists()) {
       return new NextResponse(
@@ -59,6 +56,8 @@ export async function POST(req: NextRequest) {
 
     return reponse;
   } catch (error) {
+    console.log("Login post error: ",error);
+
     return new NextResponse(
       JSON.stringify({ error: (error as Error).message, success: false }),
       { status: 400 }

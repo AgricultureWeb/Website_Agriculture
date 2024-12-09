@@ -11,7 +11,6 @@ interface RegisterationStateProps {
 const RegisterationState: React.FC<RegisterationStateProps> = ({
   children,
 }) => {
-  const [location, setLocation] = useState<object | null>(null);
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState(null);
 
@@ -19,6 +18,10 @@ const RegisterationState: React.FC<RegisterationStateProps> = ({
 
   const logout = async () => {
     try {
+      if (!(await isLoggedIn())) {
+        return;
+      }
+      setLoading(true);
       const response = await fetch("/api/auth/logout", {
         method: "GET",
         headers: {
@@ -32,6 +35,7 @@ const RegisterationState: React.FC<RegisterationStateProps> = ({
         toast.success(data.message);
       }
       router.push("/login");
+      setLoading(false);
     } catch (error) {
       console.log("Error:", error);
       toast.error("Error: " + error);
@@ -40,7 +44,10 @@ const RegisterationState: React.FC<RegisterationStateProps> = ({
 
   const signup = async (values: any) => {
     try {
-      console.log("signup values", values);
+      if (await isLoggedIn()) {
+        router.push("/");
+        return;
+      }
       setLoading(true);
       const response = await fetch("/api/auth/signup", {
         method: "POST",
@@ -66,6 +73,10 @@ const RegisterationState: React.FC<RegisterationStateProps> = ({
 
   const login = async (values: any) => {
     try {
+      if (await isLoggedIn()) {
+        router.push("/");
+        return;
+      }
       setLoading(true);
       const response = await fetch("/api/auth/login", {
         method: "POST",
@@ -89,8 +100,29 @@ const RegisterationState: React.FC<RegisterationStateProps> = ({
     }
   };
 
+  const isLoggedIn = async () => {
+    try {
+      const response = await fetch("/api/user/checkAuth", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await response.json();
+      return data.success;
+    } catch (error) {
+      console.log("Error:", error);
+      toast.error("Error: " + error);
+      return false;
+    }
+  };
+
   const getUserData = async () => {
     try {
+      if (!(await isLoggedIn())) {
+        router.push("/login");
+        return;
+      }
       const response = await fetch("/api/user", {
         method: "GET",
         headers: {
@@ -99,7 +131,9 @@ const RegisterationState: React.FC<RegisterationStateProps> = ({
       });
       const data = await response.json();
       if (data.success) {
-        setUser(data.user);
+        if (data.user !== user) {
+          setUser(data.user);
+        }
       } else if (data.message === "User not authenticated") {
         router.push("/login");
       }
@@ -112,8 +146,6 @@ const RegisterationState: React.FC<RegisterationStateProps> = ({
   return (
     <UserContext.Provider
       value={{
-        location,
-        setLocation,
         loading,
         setLoading,
         logout,
@@ -121,6 +153,7 @@ const RegisterationState: React.FC<RegisterationStateProps> = ({
         login,
         getUserData,
         user,
+        isLoggedIn,
       }}
     >
       {children}

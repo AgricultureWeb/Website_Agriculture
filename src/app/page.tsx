@@ -2,7 +2,6 @@
 import React, { useEffect, useContext } from "react";
 import Sidebar from "../components/Sidebar";
 import navigationContext from "@/context/navigationContext";
-import UserContext from "@/context/userContext";
 
 const page = () => {
   const navContext = useContext(navigationContext);
@@ -15,17 +14,6 @@ const page = () => {
   }
 
   const { currentComponent } = navContext;
-
-  const userContext = useContext(UserContext);
-
-  if (!userContext) {
-    console.log("User context is not provided", userContext);
-
-    console.error("User context is not provided");
-    return <div>Error: User context is not provided.</div>;
-  }
-
-  const { getUserData } = userContext;
 
   return (
     <main className="lg:flex">

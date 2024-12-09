@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import backArrow from "../../public/assets/icons/back-arrow.svg";
 import globe from "../../public/assets/icons/globe.svg";
-import bookmark from "../../public/assets/icons/bookmark.svg";
+import Bookmark from "../../public/assets/icons/Bookmark.svg";
 import clock from "../../public/assets/icons/Clock.svg";
 import newsPlaceholderBg from "../../public/assets/images/news-placeholder-bg.png";
 import Image from "next/image";
@@ -74,47 +74,55 @@ const NewsComponent: React.FC<NewsComponentProps> = ({
           <Image src={globe} width={30} height={30} alt="globe" />
         </button>
       </div>
-      {loading? <div>loading...</div>:
+      {loading ? (
+        <div>loading...</div>
+      ) : (
         <div className="relative flex flex-wrap m-3 mb-10 overflow-auto h-screen">
-        {news.map((element: any) => {
-          if (
-            element.title !== "[Removed]" &&
-            element.description !== "[Removed]" &&
-            element.url !== "[Removed]"
-          ) {
-            return (
-              <div
-                className="w-full sm:w-1/2 lg:w-1/4 cursor-pointer"
-                key={element.url}
-                onClick={goToNews(element.url)}
-              >
-                <div className="mr-3 mb-3 ">
-                  <div className="relative">
-                    <Image
-                      className="rounded-t-lg h-[200px]"
-                      src={element.urlToImage || newsPlaceholderBg}
-                      alt="news"
-                      width={500}
-                      height={300}
-                      loader={customImageLoader}
-                    />
-                    <span className="absolute rounded-full p-2 bg-[#27612B] top-2 right-2">
-                      <Image src={bookmark} alt="mark" width={8} height={4} />
-                    </span>
-                    <div className="bg-secondary_green rounded-b-lg p-2 h-[110px]">
-                      <p className="text-lg">{getTitle(element.title)}</p>
-                      <span className="text-xs text-gray-500 flex mt-3">
-                        <Image src={clock} width={18} height={18} alt="clock" />
-                        {getMinutesRead(element.description)} minutes read
+          {news.map((element: any) => {
+            if (
+              element.title !== "[Removed]" &&
+              element.description !== "[Removed]" &&
+              element.url !== "[Removed]"
+            ) {
+              return (
+                <div
+                  className="w-full sm:w-1/2 lg:w-1/4 cursor-pointer"
+                  key={element.url}
+                  onClick={goToNews(element.url)}
+                >
+                  <div className="mr-3 mb-3 ">
+                    <div className="relative">
+                      <Image
+                        className="rounded-t-lg h-[200px]"
+                        src={element.urlToImage || newsPlaceholderBg}
+                        alt="news"
+                        width={500}
+                        height={300}
+                        loader={customImageLoader}
+                      />
+                      <span className="absolute rounded-full p-2 bg-[#27612B] top-2 right-2">
+                        <Image src={Bookmark} alt="mark" width={8} height={4} />
                       </span>
+                      <div className="bg-secondary_green rounded-b-lg p-2 h-[110px]">
+                        <p className="text-lg">{getTitle(element.title)}</p>
+                        <span className="text-xs text-gray-500 flex mt-3">
+                          <Image
+                            src={clock}
+                            width={18}
+                            height={18}
+                            alt="clock"
+                          />
+                          {getMinutesRead(element.description)} minutes read
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          }
-        })}
-      </div>}
+              );
+            }
+          })}
+        </div>
+      )}
     </div>
   );
 };

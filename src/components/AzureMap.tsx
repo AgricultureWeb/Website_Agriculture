@@ -1,21 +1,19 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
 import * as atlas from "azure-maps-control";
-import { set } from "@cloudinary/url-gen/actions/variable";
+import LabContext from "@/context/labContext";
+import { Lab } from "@/models/Labs";
 
 interface AzureMapProps {
   subscriptionKey: string;
   setLocations?: (locations: any) => void;
-  destination: { lon: number; lat: number } | null;
-}
-interface POIResult {
-  position: {
-    lon: number;
-    lat: number;
-  };
-  poi: {
-    name: string;
-  };
+  destination: { longitude: number; latitude: number } | null;
 }
 
 const AzureMap: React.FC<AzureMapProps> = ({
@@ -51,13 +49,19 @@ const AzureMap: React.FC<AzureMapProps> = ({
       />
     </svg>`;
 
-  useEffect(() => {
-    let map: atlas.Map | null = null;
+  const labContext = useContext(LabContext);
+  if (!labContext) {
+    console.error("Lab context is not provided");
+    return <div>Error: Lab context is not provided.</div>;
+  }
 
-    const loadMap = (center: [number, number]) => {
-      if (!mapRef.current) return;
+  const { getLabs } = labContext;
 
-      map = new atlas.Map(mapRef.current, {
+  const loadMap = useCallback(
+    (center: [number, number]) => {
+      if (!mapRef.current) return null;
+
+      const map = new atlas.Map(mapRef.current, {
         center: center,
         zoom: 10,
         authOptions: {
@@ -71,10 +75,8 @@ const AzureMap: React.FC<AzureMapProps> = ({
       });
 
       map.events.add("ready", () => {
-        if (!map) return;
-
         if (center[0] !== 0 && center[1] !== 0) {
-          map?.markers.add(
+          map.markers.add(
             new atlas.HtmlMarker({
               position: center,
               htmlContent: UserLocationPin,
@@ -82,78 +84,71 @@ const AzureMap: React.FC<AzureMapProps> = ({
           );
         }
       });
-    };
-    const loadLabs = (center: [number, number]) => {
-      var query = "Soil Testing Laboratory";
-      var radius = 10000;
-      var lon = center[0];
-      var lat = center[1];
-      var url = `https://atlas.microsoft.com/search/poi/json?api-version=1.0&query=${query}&lat=${lat}&lon=${lon}&radius=${radius}`;
 
-      map?.events.add("ready", () => {
-        fetch(url, {
-          headers: {
-            "Subscription-Key": subscriptionKey,
-          },
-        })
-          .then((response) => response.json())
-          .then((response) => {
-            console.log("response.results = ", response.results);
+      return map;
+    },
+    [subscriptionKey, UserLocationPin]
+  );
 
-            if (setLocations) setLocations(response.results);
+  const loadLabs = useCallback(
+    async (map: atlas.Map, center: [number, number]) => {
+      const labs: Lab[] = await getLabs();
 
-            var bounds = [];
-            bounds.push([lon, lat]);
-            const labDataSource = new atlas.source.DataSource();
-            if (!map) return;
-            map.sources.add(labDataSource);
+      if (setLocations) setLocations(labs);
+      const bounds = [[center[0], center[1]]];
+      const labDataSource = new atlas.source.DataSource();
 
-            response.results.forEach((result: POIResult) => {
-              const point = new atlas.data.Point([
-                result.position.lon,
-                result.position.lat,
-              ]);
-              const feature = new atlas.data.Feature(point, {
-                name: result.poi.name,
-              });
-              labDataSource.add(feature);
-              bounds.push([result.position.lon, result.position.lat]);
-            });
+      map.events.add("ready", () => {
+        map.sources.add(labDataSource);
 
-            const symbolLayer = new atlas.layer.SymbolLayer(
-              labDataSource,
-              undefined,
-              {
-                iconOptions: {
-                  image: "pin-red",
-                  anchor: "center",
-                  allowOverlap: true,
-                  offset: [0, -10],
-                },
-                textOptions: {
-                  textField: ["get", "name"],
-                  offset: [0, 1.2],
-                },
-              }
-            );
-
-            map.layers.add(symbolLayer);
-
-            if (bounds.length > 0) {
-              map.setCamera({
-                bounds: atlas.data.BoundingBox.fromPositions(bounds),
-                padding: 50,
-              });
-            }
+        labs.forEach((lab: Lab) => {
+          const point = new atlas.data.Point([
+            lab.position?.longitude!,
+            lab.position?.latitude!,
+          ]);
+          const feature = new atlas.data.Feature(point, {
+            name: lab.name,
           });
+          labDataSource.add(feature);
+          bounds.push([lab.position?.longitude!, lab.position?.latitude!]);
+        });
+
+        const symbolLayer = new atlas.layer.SymbolLayer(
+          labDataSource,
+          undefined,
+          {
+            iconOptions: {
+              image: "pin-red",
+              anchor: "center",
+              allowOverlap: true,
+              offset: [0, -10],
+            },
+            textOptions: {
+              textField: ["get", "name"],
+              offset: [0, 1.2],
+            },
+          }
+        );
+
+        map.layers.add(symbolLayer);
+
+        if (bounds.length > 0) {
+          map.setCamera({
+            bounds: atlas.data.BoundingBox.fromPositions(bounds),
+            padding: 50,
+          });
+        }
       });
-    };
-    const getDirections = (position: { lon: number; lat: number }) => {
+    },
+    [getLabs, setLocations]
+  );
+
+  const getDirections = useCallback(
+    (map: atlas.Map, position: { longitude: number; latitude: number }) => {
       if (!userLocation || !destination) return;
+      console.log("Getting directions");
 
-      map?.events.add("ready", () => {
-        if (!map) return;
-
+      map.events.add("ready", () => {
         const lineDatasource = new atlas.source.DataSource();
         map.sources.add(lineDatasource);
 
@@ -167,16 +162,7 @@ const AzureMap: React.FC<AzureMapProps> = ({
           "labels"
         );
 
-        //Start and end point input to the search route request
-        var query =
-          userLocation[1] +
-          "," +
-          userLocation[0] +
-          ":" +
-          destination.lat +
-          "," +
-          destination.lon;
-        //Make a search route request for a truck vehicle type
+        const query = `${userLocation[1]},${userLocation[0]}:${destination.latitude},${destination.longitude}`;
         const truckRouteUrl = `https://atlas.microsoft.com/route/directions/json?api-version=1.0&travelMode=truck&vehicleWidth=2&vehicleHeight=2&vehicleLength=5&vehicleLoadType=USHazmatClass2&query=${query}`;
 
         fetch(truckRouteUrl, {
@@ -186,18 +172,11 @@ const AzureMap: React.FC<AzureMapProps> = ({
         })
           .then((response) => response.json())
           .then((response) => {
-            var route = response.routes[0];
-            //Create an array to store the coordinates of each turn
-            var routeCoordinates: any[] = [];
-            route.legs.forEach((leg: any) => {
-              var legCoordinates = leg.points.map((point: any) => {
-                return [point.longitude, point.latitude];
-              });
-              //Add each turn to the array
-              routeCoordinates = routeCoordinates.concat(legCoordinates);
-            });
+            const route = response.routes[0];
+            const routeCoordinates = route.legs.flatMap((leg: any) =>
+              leg.points.map((point: any) => [point.longitude, point.latitude])
+            );
 
-            //Add the route line to the data source. We want this to render below the car route which will likely be added to the data source faster, so insert it at index 0.
             lineDatasource.add(
               new atlas.data.Feature(
                 new atlas.data.LineString(routeCoordinates),
@@ -210,44 +189,51 @@ const AzureMap: React.FC<AzureMapProps> = ({
             );
           });
       });
-    };
+    },
+    [userLocation, destination, subscriptionKey]
+  );
 
-    if (typeof window !== "undefined") {
-      if (navigator.geolocation) {
-        if (!userLocation) {
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const { latitude, longitude } = position.coords;
-              setUserLocation([longitude, latitude]);
-              loadMap([longitude, latitude]);
-              loadLabs([longitude, latitude]);
-            },
-            (error) => {
-              console.error("Error getting user location:", error);
-              loadMap([0, 0]);
-            }
-          );
-        } else {
-          loadMap(userLocation);
-          loadLabs(userLocation);
-          if (destination) {
-            getDirections(destination);
-          }
-        }
-      } else {
-        console.error("Geolocation is not supported by this browser.");
-        loadMap([0, 0]);
-      }
+  useEffect(() => {
+    if (typeof window === "undefined" || !navigator.geolocation) {
+      console.error("Geolocation is not supported by this browser.");
+      return;
     }
 
-    if (!mapRef.current) return;
+    let map: atlas.Map | null = null;
+
+    const initializeMap = (position: [number, number]) => {
+      map = loadMap(position);
+      if (map) {
+        loadLabs(map, position);
+      }
+      if (map && destination) {
+        getDirections(map, destination);
+      }
+    };
+
+    if (!userLocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const userPos: [number, number] = [longitude, latitude];
+          setUserLocation(userPos);
+          initializeMap(userPos);
+        },
+        (error) => {
+          console.error("Error getting user location:", error);
+          initializeMap([0, 0]);
+        }
+      );
+    } else {
+      initializeMap(userLocation);
+    }
 
     return () => {
       if (map) {
         map.dispose();
       }
     };
-  }, [subscriptionKey, destination]);
+  }, [loadMap, loadLabs, getDirections, userLocation, destination]);
 
   return <div ref={mapRef} className="h-full w-full"></div>;
 };

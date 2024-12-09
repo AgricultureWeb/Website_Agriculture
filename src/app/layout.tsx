@@ -3,6 +3,7 @@ import { Readex_Pro } from "next/font/google";
 import "./globals.css";
 import NavigationState from "@/context/NavigationState";
 import UserState from "@/context/UserState";
+import LabState from "@/context/LabState";
 
 const readex = Readex_Pro({ subsets: ["latin", "latin-ext"] });
 
@@ -27,7 +28,9 @@ export default function RootLayout({
       </head>
       <body className={readex.className}>
         <UserState>
-          <NavigationState>{children}</NavigationState>
+          <NavigationState>
+            <LabState>{children}</LabState>
+          </NavigationState>
         </UserState>
       </body>
     </html>
